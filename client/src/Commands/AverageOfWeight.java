@@ -1,8 +1,9 @@
 package Commands;
 
-import Person.Person;
+import modules.Request;
+import modules.TCPclient;
 
-import static modules.LoadCSV.personHashMap;
+
 
 public class AverageOfWeight extends Command {
     public AverageOfWeight(){
@@ -11,18 +12,10 @@ public class AverageOfWeight extends Command {
     @Override
     public void execute() {
         try {
-            if (personHashMap.isEmpty()) {
-                System.out.println("Коллекция пуста");
-            }
-            double sum = 0;
-            int personWeight = personHashMap.size();
-            for (Person person : personHashMap.values()) {
-                sum += person.getWeight();
-            }
-            double averageWeight = sum / personWeight;
-            System.out.println("Средний вес всех элементов коллекции: " + averageWeight);
-        }catch (NullPointerException e){
-            System.out.println(e.getMessage());
+            TCPclient.sendCommand(new Request("average_of_weight"));
+
+        }catch (Exception e) {
+            System.out.println("Ошибка: " + e);
         }
     }
 }

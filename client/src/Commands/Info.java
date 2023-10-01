@@ -1,7 +1,10 @@
 package Commands;
 
-import modules.LoadCSV;
-import static modules.LoadCSV.personHashMap;
+import modules.Request;
+import modules.TCPclient;
+
+import java.io.IOException;
+
 
 public class Info extends Command{
 
@@ -11,8 +14,10 @@ public class Info extends Command{
 
     @Override
     public void execute() {
-        System.out.println("Тип коллекции: HashMap");
-        System.out.println("Дата инициализации:" + LoadCSV.date);
-        System.out.println("Количество элементов :" + personHashMap.size());
+        try {
+            TCPclient.sendCommand(new Request("info"));
+        } catch (IOException e) {
+            System.out.println("Ошибка: " + e);
+        }
     }
 }

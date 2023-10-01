@@ -1,8 +1,9 @@
 package Commands;
 
-import Person.Person;
+import modules.Request;
+import modules.TCPclient;
 
-import static modules.LoadCSV.personHashMap;
+import java.io.IOException;
 
 public class FilterLessThanWeight extends Command {
     public FilterLessThanWeight(){
@@ -11,19 +12,9 @@ public class FilterLessThanWeight extends Command {
     @Override
     public void execute() {
         try {
-            Long weight = Long.valueOf(getArgument());
-            boolean hasElements = false;
-            for (Person person : personHashMap.values()) {
-                if (person.getWeight() < weight) {
-                    hasElements = true;
-                    System.out.println(person);
-                }
-            }
-            if (!hasElements) {
-                System.out.println("Нет элементов с весом меньше заданного значения.");
-            }
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+            TCPclient.sendCommand(new Request("filter_less_than_weight",null,getArgument()));
+        } catch (IOException e) {
+            System.out.println("Ошибка : " + e);
         }
 
     }

@@ -1,11 +1,9 @@
 package Commands;
 
-import Person.Person;
+import modules.Request;
+import modules.TCPclient;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-
-import static modules.LoadCSV.personHashMap;
+import java.io.IOException;
 
 public class PrintFieldDescendingHairColor extends Command {
     public PrintFieldDescendingHairColor(){
@@ -13,15 +11,10 @@ public class PrintFieldDescendingHairColor extends Command {
     }
     @Override
     public void execute() {
-        if (personHashMap.isEmpty()) {
-            System.out.println("Коллекция пуста");
-        }
-        ArrayList<Person> personList = new ArrayList<>(personHashMap.values());
-        personList.sort(Comparator.comparing(Person::getHairColor).reversed());
-
-        System.out.println("Значения поля hairColor всех элементов в порядке убывания:");
-        for (Person person : personList) {
-            System.out.println(person.getHairColor());
+        try {
+            TCPclient.sendCommand(new Request("print_field_descending_hair_color"));
+        } catch (IOException e) {
+            System.out.println("Ошибка : " + e);
         }
     }
 }

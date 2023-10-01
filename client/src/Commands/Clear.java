@@ -1,6 +1,10 @@
 package Commands;
 
-import static modules.LoadCSV.personHashMap;
+import modules.Request;
+import modules.TCPclient;
+
+import java.io.IOException;
+
 
 public class Clear extends Command {
     public Clear(){
@@ -8,7 +12,10 @@ public class Clear extends Command {
 }
     @Override
     public void execute() {
-        personHashMap.clear();
-        System.out.println("Коллекцие очистилось");
+        try {
+            TCPclient.sendCommand(new Request("clear"));
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+        }
     }
 }

@@ -1,6 +1,8 @@
 package Commands;
 
-import static modules.LoadCSV.personHashMap;
+import modules.Request;
+import modules.TCPclient;
+
 
 public class RemoveKey extends Command {
     public RemoveKey(){
@@ -10,17 +12,9 @@ public class RemoveKey extends Command {
     @Override
     public void execute() {
         try {
-            Integer key = Integer.valueOf(getArgument());
-            if (personHashMap.containsKey(key)) {
-                personHashMap.remove(key);
-                System.out.println("Элемент с ключом " + key + " успешно удален из коллекции.");
-            }
-            else {
-                System.out.println("Элемент с ключом " + key + " не найден в коллекции.");
-            }
-
+            TCPclient.sendCommand(new Request("remove_key" , null, getArgument()));
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            System.out.println("Ошибка : " + e);
         }
     }
 }

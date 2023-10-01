@@ -1,10 +1,11 @@
 package Commands;
 
-import Person.Person;
 import modules.InputDataForm;
-import static  modules.LoadCSV.personHashMap;
+import modules.Request;
+import modules.TCPclient;
 
-import java.util.Map;
+import java.io.IOException;
+
 
 public class Update extends Command {
     public Update(){
@@ -13,20 +14,10 @@ public class Update extends Command {
     }
     @Override
     public void execute() {
-        try {
-            Integer id = Integer.valueOf(getArgument());
-            for (Map.Entry<Integer, Person> inf : personHashMap.entrySet()) {
-                if (inf.getKey().equals(id)) {
-                    Person person = InputDataForm.input();
-                    inf.getValue().update(person);
-                    System.out.println("Информация пользователя с ID " + id + " успешно обновлены");
-                }
-            }
-            if (id < 0) {
-                System.out.println("Неверный формат аргумента!!!");
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        try{
+            TCPclient.sendCommand(new Request("update", InputDataForm.input(),getArgument()));
+        }catch (IOException e) {
+            System.out.println("Error: " + e);
         }
     }
 }

@@ -15,8 +15,7 @@ public class Insert extends Command{
     public void execute() {
         Person person = InputDataForm.input();
             try {
-                TCPclient.sendCommand(new Request("insert", person));
-                TCPclient.handleRead();
+                TCPclient.sendCommand(new Request("insert",person));
             } catch (IOException e) {
                 System.out.println("Error: " + e.getMessage());
             }

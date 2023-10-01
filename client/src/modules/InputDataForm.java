@@ -6,9 +6,7 @@ import java.time.LocalDate;
 import java.util.Scanner;
 
 public class InputDataForm {
-
     static Scanner scan = new Scanner(System.in);
-
     public static Person input() {
         Person person = new Person(
                 Name(),
@@ -22,9 +20,6 @@ public class InputDataForm {
                 );
         return person;
     }
-
-
-
     static String Name(){
         String input;
         do {

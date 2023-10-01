@@ -13,9 +13,7 @@ public class CommandManager {
         commands.put("update", new Update());
         commands.put("remove_key",new RemoveKey());
         commands.put("clear", new Clear());
-        commands.put("execute_script", new ExecuteScript());
         commands.put("exit", new Exit());
-        commands.put("remove_greater",new RemovGreater());
         commands.put("remove_greater_key", new RemoveGreaterKey());
         commands.put("remove_lower_key",new RemoveLowerKey());
         commands.put("average_of_weight",new AverageOfWeight());

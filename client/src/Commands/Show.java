@@ -2,8 +2,12 @@ package Commands;
 
 
 import Person.Person;
-import static modules.LoadCSV.personHashMap;
+import modules.Request;
+import modules.TCPclient;
 
+//import static modules.LoadCSV.personHashMap;
+
+import java.io.IOException;
 import java.util.Map;
 
 public class Show extends Command {
@@ -13,13 +17,10 @@ public class Show extends Command {
     }
     @Override
     public void execute() {
-        if (personHashMap.isEmpty()){
-            System.out.println("Колекция пуста");
-        }
-        else {
-            for (Map.Entry<Integer, Person> inf : personHashMap.entrySet()){
-                System.out.println(inf.getValue());
-            }
+        try {
+            TCPclient.sendCommand(new Request("show"));
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
         }
     }
 }

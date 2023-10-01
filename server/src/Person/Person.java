@@ -1,7 +1,7 @@
 package Person;
-
 import java.io.Serializable;
 import java.time.LocalDate;
+
 
 public class Person implements Comparable<Person> , Serializable {
     private static int nextId = 0;
@@ -28,14 +28,20 @@ public class Person implements Comparable<Person> , Serializable {
 
 
 
-   public void update(String name,
-                      Coordinates coordinates,
-                      LocalDate creationDate,
-                      Double height,
-                      Long weight,
-                      Color eyeColor,
-                      ColorH hairColor,
-                      Location location){
+
+    public Integer getId() {
+        return id;
+    }
+
+
+    public void update(String name,
+                       Coordinates coordinates,
+                       LocalDate creationDate,
+                       Double height,
+                       Long weight,
+                       Color eyeColor,
+                       ColorH hairColor,
+                       Location location){
         this.name = name;
         this.coordinates = coordinates;
         this.height = height;
@@ -43,9 +49,10 @@ public class Person implements Comparable<Person> , Serializable {
         this.eyeColor = eyeColor;
         this.hairColor = hairColor;
         this.location = location;
-   }
-   public void update(Person p){
-        update( p.getName(),
+    }
+
+    public void update(Person p){
+        update(                p.getName(),
                 p.getCoordinates(),
                 p.creationDate,
                 p.getHeight(),
@@ -53,11 +60,7 @@ public class Person implements Comparable<Person> , Serializable {
                 p.getEyeColor(),
                 p.getHairColor(),
                 p.getLocation());
-   }
-    public Integer getId() {
-        return id;
     }
-
     public String getName() {
         return name;
     }

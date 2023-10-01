@@ -1,69 +1,67 @@
 package modules;
 
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
-import java.nio.channels.SocketChannel;
+import java.net.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.util.Scanner;
 
 public class TCPclient {
     private static final int BUFFER_SIZE = 1024;
+    private InetSocketAddress host;
+
     private static SocketChannel socketChannel;
+    private static ClientReceivingManager receivingManager = null;
+    private static ClientSendingManager sendingManager = null;
 
     public TCPclient(String host, int port){
-        try {
-            socketChannel = SocketChannel.open();
-            socketChannel.connect(new InetSocketAddress(host, port));
-
-        } catch (Exception e) {
-            System.out.println("Server is offline!");
-            System.exit(0);
-        }
+        this.host = new InetSocketAddress(host, port);
     }
 
-    public static void handleRead() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-        int read = -1;
-        try {
-            read = socketChannel.read(buffer);
-        } catch (SocketException | ClosedChannelException se) {
-            System.out.println("server die (");
-            System.exit(0);
+    public SocketChannel start() {
+        while(true){
+            try {
+                if(socketChannel != null) {
+                    socketChannel.close();
+                }
+                this.socketChannel = SocketChannel.open();
+                socketChannel.bind(new InetSocketAddress("127.0.0.1", 20000+(int)(Math.random()*10000)));
+                socketChannel.configureBlocking(false);
+                socketChannel.connect(this.host);
+                receivingManager = new ClientReceivingManager(this);
+                sendingManager = new ClientSendingManager(this);
+                return socketChannel;
+            } catch (Exception e) {
+                try{
+                    System.out.println("TCP client: " + e.getMessage());
+                    socketChannel.close();
+                }
+                catch (Exception e2){
+                    System.out.println("TCP client: " + e2.getMessage());
+                }
+            }
         }
-
-        if (read == -1) {
-            socketChannel.close();
-            return;
-        } // socketChanal closing.
-        buffer.flip();
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(buffer.array());
-        ObjectInputStream ois = new ObjectInputStream(bais);
-        Response response = null;
-        try {
-            response = (Response) ois.readObject();
-        } catch (ClassNotFoundException e) {
-            System.out.println("server die (");
-            System.exit(0);
-        }
-        System.out.println("Server: " + response.getResult());
     }
 
     public static void sendCommand(Request request) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(request);
 
-        System.out.println(request.toString() + " from client");
+        try (var baos = new ByteArrayOutputStream(); var a=new ObjectOutputStream(baos)) {
+            a.writeObject(request);
+            sendingManager.send(baos.toByteArray());
 
-        ByteBuffer buffer = ByteBuffer.wrap(baos.toByteArray());
-        try{
-            socketChannel.write(buffer);
-        } catch (IOException ioe) {
-            System.out.println("server die (");
-            System.exit(0);
+            try(var command = new ObjectInputStream(new ByteArrayInputStream(receivingManager.receive()))) {
+                Response response = (Response) command.readObject();
+                System.out.println(response.getResult());
+            }
+        } catch (Exception e) {
+            System.out.println("\nsendCommand - " + e);
         }
-        buffer.clear();
+    }
+    public SocketChannel getSocketChannel () {
+        return this.socketChannel;
+    }
+    public boolean isConnected() {
+        return socketChannel != null && socketChannel.socket().isBound() && !socketChannel.socket().isClosed() && socketChannel.isConnected()
+                && !socketChannel.socket().isInputShutdown() && !socketChannel.socket().isOutputShutdown();
     }
 }
