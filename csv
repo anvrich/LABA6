@@ -1,0 +1,2 @@
+scp -P 2222 file.csv s373329@se.ifmo.ru:/home/studs/s373329/Lab6
+

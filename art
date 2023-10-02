@@ -1,0 +1,3 @@
+cd out/artifacts/
+scp -P 2222 -r client_jar/ server_jar/  s373329@se.ifmo.ru:/home/studs/s373329/Lab6
+
